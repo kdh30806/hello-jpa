@@ -1,12 +1,11 @@
-package jpabook.japshop.main;
+package hellojpa;
+
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-
-import jpabook.jpashop.domain.Order;
-import jpabook.jpashop.domain.OrderItem;
 
 public class JpaMain {
 	public static void main(String[] args) {
@@ -15,9 +14,29 @@ public class JpaMain {
 		EntityManager em = emf.createEntityManager();
 		
 		EntityTransaction tx = em.getTransaction();
-		tx.begin();  
+		tx.begin();
 		
-		try {			
+		try {
+
+			Team team = new Team();
+			team.setName("TeamA");
+			em.persist(team);
+			
+			Member member = new Member();
+			member.setUsername("member1");
+			member.setTeam(team);			
+			em.persist(member);
+			
+			em.flush();
+			em.clear();
+			
+			Member findMember = em.find(Member.class, member.getId());
+			List<Member> members = findMember.getTeam().getMembers();
+			
+			for(Member m : members) {
+				System.out.println(m.getUsername());
+			}
+			
 			tx.commit();
 		} catch (Exception e) {
 			tx.rollback();
